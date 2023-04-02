@@ -3,50 +3,36 @@ import io from "socket.io-client";
 import { useEffect, useState } from 'react';
 
 
-const ENDPOINT = "https://next-chat-server.vercel.app";
 
 const Chat = () =>{
     // const socket = io.connect('https://next-chat-server.vercel.app')
-  const [user, setUser] = useState("");
-  const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState([]);
   
   
-  const socket = io(ENDPOINT);
+  const socket = io.connect("http://localhost:5000/");
 
-//   useEffect(() => {
-//     axios.get(`${ENDPOINT}/messages`).then((response) => {
-//       setMessages(response.data);
-//     });
-//   }, []);
 
   useEffect(() => {
-   socket.on('sendMessage', function(msg) {
-   console.log('Message received from server:', msg);
-   setMessages((messages) =>[...messages + msg])
+   socket.on('getMessages', function(getAllMessages) {
+   console.log('Message received from server:', getAllMessages);
+   setMessages(getAllMessages)
 });
-console.log(messages)
 //     socket.on("newMessage", (msg) => {
 //       setMessages((prevMessages) => [...prevMessages, msg]);
 //     });
   }, [socket]);
 
-  
+  console.log(messages)
 socket.on('myData', (data) => {
    console.log(data); // do something with the data
  });
 
   const sendMessage = (e) => {
     e.preventDefault();
-    const msg = e.target.text.value;
-    
-    const m = {
-      message:msg
-    }
-    console.log(msg)
+    const text = e.target.text.value;
+    console.log(text)
 
-    socket.emit("newMessage", m);
+    socket.emit("newMessage", text);
     // const message = text;
     // console.log(message)
 
@@ -75,11 +61,7 @@ socket.on('myData', (data) => {
                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
          </button>
-         <button type="button" className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6">
-               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-            </svg>
-         </button>
+         
          <button type="button" className="inline-flex items-center justify-center rounded-lg border h-10 w-10 transition duration-500 ease-in-out text-gray-500 hover:bg-gray-300 focus:outline-none">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6">
                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
@@ -93,14 +75,12 @@ socket.on('myData', (data) => {
       
    <div className="chat-message">
          <div className="flex items-end justify-end">
-            {/* {
-               messages?.map(msgs => <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-               <div><span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">{msgs}</span></div>
-            </div>)
-            } */}
+         <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
+               {/* <div><span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">{messages.message}</span></div> */}
+            </div>
          </div>
       </div>
-      <div className="chat-message">
+      {/* <div className="chat-message">
          <div className="flex items-end">
             <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
                <div><span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">I get the same error on Arch Linux (also with sudo)</span></div>
@@ -108,7 +88,7 @@ socket.on('myData', (data) => {
                <div><span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">even i am facing</span></div>
             </div>
          </div>
-      </div>
+      </div> */}
    </div>
    <div className="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
       <div className="relative flex">
