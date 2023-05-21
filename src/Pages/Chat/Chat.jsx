@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import { useEffect, useState } from 'react';
 
 
-const ENDPOINT = "https://next-chat-server.vercel.app";
+const ENDPOINT = "http://localhost:5000/";
 
 const Chat = () =>{
     // const socket = io.connect('https://next-chat-server.vercel.app')
@@ -15,23 +15,17 @@ const Chat = () =>{
   
   const socket = io(ENDPOINT);
 
+
 //   useEffect(() => {
-//     axios.get(`${ENDPOINT}/messages`).then((response) => {
-//       setMessages(response.data);
-//     });
-//   }, []);
+//    socket.on('sendMessage', function(msg) {
+//    console.log('Message received from server:', msg);
+//    setMessages((messages) =>[...messages + msg])
+// });
+// console.log(messages)
 
-  useEffect(() => {
-   socket.on('sendMessage', function(msg) {
-   console.log('Message received from server:', msg);
-   setMessages((messages) =>[...messages + msg])
-});
-console.log(messages)
-//     socket.on("newMessage", (msg) => {
-//       setMessages((prevMessages) => [...prevMessages, msg]);
-//     });
-  }, [socket]);
+//   }, [socket]);
 
+ 
   
 socket.on('myData', (data) => {
    console.log(data); // do something with the data
@@ -41,23 +35,31 @@ socket.on('myData', (data) => {
     e.preventDefault();
     const msg = e.target.text.value;
     
-    const m = {
-      message:msg
-    }
-    console.log(msg)
-
-    socket.emit("newMessage", m);
-    // const message = text;
-    // console.log(message)
+    socket.emit("chatmessage", msg);
 
     e.target.reset()
   };
   
 
-//   socket.on("recivedMessage", (msg)=>{
-//    console.log("all messages",msg)
-//     setMessage(msg)
-//   })
+  
+  useEffect(() => {
+   
+   socket.on('output-messages', data => {
+      // console.log(data)
+      socket.on('message', data => {
+         console.log( data)
+         setMessages([data])
+      })
+      if (data.length) {
+         console.log(data)
+         setMessages(data, ...messages)
+      }
+   })
+}, [setMessages])
+
+
+console.log("state",messages)
+
     return(
         <div className=''>
             <div className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
@@ -92,21 +94,13 @@ socket.on('myData', (data) => {
    <div id="messages" className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
       
    <div className="chat-message">
-         <div className="flex items-end justify-end">
-            {/* {
-               messages?.map(msgs => <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
-               <div><span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">{msgs}</span></div>
-            </div>)
-            } */}
-         </div>
-      </div>
-      <div className="chat-message">
-         <div className="flex items-end">
-            <div className="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
-               <div><span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">I get the same error on Arch Linux (also with sudo)</span></div>
-               <div><span className="px-4 py-2 rounded-lg inline-block bg-gray-300 text-gray-600">I also have this issue, Here is what I was doing until now: #1076</span></div>
-               <div><span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">even i am facing</span></div>
-            </div>
+         <div className="space-y-2">
+         { messages.map(msg =><div key={msg._id} className="px-4 py-2 rounded-lg bg-gray-300 text-gray-600">
+                  {msg.msg}
+                  </div>)}
+                  {/* <div  className="text-end w-full px-4 py-2 rounded-lg bg-gray-300 text-gray-600">
+                  {message}
+                  </div> */}
          </div>
       </div>
    </div>
