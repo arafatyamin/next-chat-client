@@ -10,7 +10,7 @@ const Chat = () =>{
   const [messages, setMessages] = useState([]);
   
   
-  const socket = io.connect("http://localhost:5000/");
+  const socket = io.connect(ENDPOINT);
 
 
 //   useEffect(() => {
@@ -39,20 +39,34 @@ socket.on('myData', (data) => {
   
 
   
+  // socket.on('output-messages', data => {
+  //    // console.log(data)
+  //    socket.on('message', data => {
+  //       console.log( data)
+  //       setMessages([data])
+  //    })
+  //    if (data.length) {
+  //       console.log(data)
+  //       setMessages(data, ...messages)
+  //    }
+  // })
   useEffect(() => {
+
+   const onFooEvent =(value)=>{
+      setMessages(previouse => [...previouse, value])
+   }
+   const onMessegesEvent =(value)=>{
+      setMessages(value)
+   }
+
+   socket.on('message', onFooEvent)
+   socket.on('output-messages', onMessegesEvent)
+   return () => {
+      socket.off('message', onFooEvent);
+      socket.off('output-messages', onMessegesEvent);
+   };
    
-   socket.on('output-messages', data => {
-      // console.log(data)
-      socket.on('message', data => {
-         console.log( data)
-         setMessages([data])
-      })
-      if (data.length) {
-         console.log(data)
-         setMessages(data, ...messages)
-      }
-   })
-}, [setMessages])
+}, []);
 
 
 console.log("state",messages)
