@@ -3,14 +3,14 @@ import io from "socket.io-client";
 import { useEffect, useState } from 'react';
 
 
-const ENDPOINT = "http://localhost:5000/";
+// const ENDPOINT = "https://reacltime-chat-app.onrender.com/";
 
 const Chat = () =>{
-    // const socket = io.connect('https://next-chat-server.vercel.app')
+    const socket = io.connect('https://reacltime-chat-app.onrender.com/')
   const [messages, setMessages] = useState([]);
   
   
-  const socket = io.connect(ENDPOINT);
+//   const socket = io.connect(ENDPOINT);
 
 
 //   useEffect(() => {
